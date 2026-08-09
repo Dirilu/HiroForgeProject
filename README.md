@@ -137,6 +137,3 @@ This project is optimized for AI-assisted development.
 ### Setup
 ```bash
 git clone https://github.com/Dirilu/HiroForgeProject.git
-
-```bash
-git clone https://github.com/Dirilu/HiroForgeProject.git
