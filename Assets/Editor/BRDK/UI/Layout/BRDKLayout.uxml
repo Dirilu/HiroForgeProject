@@ -1,0 +1,13 @@
+<ui:UXML
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements">
+
+    <ui:VisualElement name="Root">
+
+        <ui:VisualElement name="Sidebar"/>
+
+        <ui:VisualElement name="Content"/>
+
+    </ui:VisualElement>
+
+</ui:UXML>

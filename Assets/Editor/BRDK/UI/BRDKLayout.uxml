@@ -1,0 +1,43 @@
+<ui:UXML
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements">
+
+    <ui:VisualElement name="Root">
+
+        <ui:VisualElement name="Sidebar">
+
+            <ui:Label
+                name="Logo"
+                text="👑 BRDK"/>
+
+            <ui:Button name="DashboardButton" text="🏠 Dashboard"/>
+
+            <ui:Button name="ProjectButton" text="📁 Project"/>
+
+            <ui:Button name="GameplayButton" text="🎮 Gameplay"/>
+
+            <ui:Button name="OnlineButton" text="🌐 Online"/>
+
+            <ui:Button name="ContentButton" text="🎨 Content"/>
+
+            <ui:Button name="BuildButton" text="📦 Build"/>
+
+            <ui:Button name="SettingsButton" text="⚙ Settings"/>
+
+        </ui:VisualElement>
+
+        <ui:VisualElement name="Content">
+
+            <ui:Label
+                name="Title"
+                text="Balut Royale Development Kit"/>
+
+            <ui:Label
+                name="Subtitle"
+                text="Dashboard"/>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+</ui:UXML>
