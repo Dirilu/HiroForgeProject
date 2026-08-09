@@ -1,20 +1,17 @@
 # 🎮 HiroForgeProject
 
-HiroForgeProject is a Unity-based development workspace built by HiroForge Studios, combining a custom editor framework (HFDK) with a scalable game architecture for fast, AI-assisted development.
+> A Unity-based development workspace by HiroForge Studios, combining a custom editor framework (HFDK) with a scalable game architecture for AI-assisted development.
 
 ---
 
 ## 🧠 Overview
 
-This project is designed to:
+HiroForgeProject is a unified Unity project that contains both:
 
-- Build games faster using AI tools like Cursor
-- Maintain clean and scalable architecture
-- Develop internal Unity editor tools alongside gameplay systems
+- 🛠️ **HFDK (HiroForge Dev Kit)** — a custom Unity editor framework
+- 🎮 **Game systems** — modular gameplay architecture under active development
 
-It contains both:
-- 🎮 A modular game framework
-- 🛠️ HFDK (HiroForge Dev Kit) – a custom Unity editor toolkit
+The goal is to create a fast, scalable development environment where AI tools like Cursor can generate, refactor, and maintain large parts of the codebase efficiently.
 
 ---
 
