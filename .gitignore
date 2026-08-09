@@ -1,0 +1,13 @@
+# Unity
+Library/
+Logs/
+Temp/
+Obj/
+Build/
+Builds/
+
+# Mac
+.DS_Store
+
+# VSCode
+.vscode/
