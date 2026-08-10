@@ -10,20 +10,14 @@
   <style>
     :root {
       --wood-dark: #1a120c;
-      --wood: #2a1c14;
-      --wood-mid: #3b281c;
       --gold: #d4a84b;
       --gold-soft: #f0d78c;
       --gold-deep: #9a7428;
       --ink: #f4ebe0;
       --muted: #b9a790;
       --panel: rgba(18, 12, 8, 0.78);
-      --tray: #243447;
-      --hold: #c9a24a;
-      --roll: #2f6fd6;
       --roll-glow: rgba(70, 140, 255, 0.55);
       --ok: #3ecf6e;
-      --danger: #d65a5a;
       --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
     }
 
@@ -47,7 +41,6 @@
       background:
         linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55)),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
-      opacity: 0.9;
       z-index: 0;
     }
 
@@ -57,22 +50,19 @@
       width: min(430px, 100%);
       min-height: 100dvh;
       margin: 0 auto;
-      padding: 14px 14px calc(18px + env(safe-area-inset-bottom));
+      padding: 12px 12px calc(16px + env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
-    header {
-      text-align: center;
-      padding: 8px 8px 2px;
-    }
+    header { text-align: center; padding: 6px 4px 0; }
 
     .logo {
       margin: 0;
       font-family: Cinzel, Georgia, serif;
       font-weight: 700;
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       letter-spacing: 0.08em;
       color: var(--gold-soft);
       text-shadow: 0 2px 0 var(--gold-deep), 0 0 18px rgba(212, 168, 75, 0.35);
@@ -80,7 +70,7 @@
 
     .logo span {
       display: block;
-      font-size: 0.7rem;
+      font-size: 0.66rem;
       letter-spacing: 0.28em;
       color: var(--muted);
       margin-top: 2px;
@@ -99,7 +89,7 @@
       border: 1px solid rgba(212, 168, 75, 0.35);
       border-radius: 999px;
       padding: 5px 12px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: var(--gold-soft);
       letter-spacing: 0.04em;
@@ -110,78 +100,140 @@
       border: 1px solid rgba(212, 168, 75, 0.28);
       border-radius: 18px;
       box-shadow: var(--shadow);
-      padding: 12px;
+      padding: 10px;
     }
 
     .scorecard h2,
     .tray-wrap h2 {
-      margin: 0 0 10px;
+      margin: 0 0 8px;
       font-family: Cinzel, Georgia, serif;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       letter-spacing: 0.12em;
       color: var(--gold);
       font-weight: 600;
     }
 
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -2px;
+      padding: 0 2px;
+    }
+
     table {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 0.86rem;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.72rem;
+      min-width: 340px;
     }
 
     th, td {
-      padding: 8px 6px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 5px 3px;
       text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      vertical-align: middle;
     }
 
     th {
       color: var(--muted);
-      font-weight: 600;
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
+      font-weight: 700;
+      font-size: 0.62rem;
+      letter-spacing: 0.04em;
+      position: sticky;
+      top: 0;
     }
 
-    td:first-child, th:first-child {
+    th:first-child,
+    td.cat {
       text-align: left;
+      padding-left: 4px;
+      min-width: 78px;
       color: var(--ink);
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.02em;
     }
 
-    .cat-btn {
-      width: 100%;
-      appearance: none;
-      border: 1px solid transparent;
-      background: transparent;
-      color: inherit;
-      font: inherit;
-      text-align: left;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    tr.available .cat-btn {
+    td.pts {
+      font-weight: 700;
       color: var(--gold-soft);
+      min-width: 28px;
     }
 
-    tr.available:hover {
+    .cell-btn {
+      appearance: none;
+      width: 34px;
+      height: 28px;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.22);
+      color: var(--muted);
+      font: inherit;
+      font-weight: 700;
+      cursor: default;
+      padding: 0;
+    }
+
+    .cell-btn.open {
+      border-color: rgba(212, 168, 75, 0.35);
+      color: var(--gold-soft);
+      cursor: pointer;
       background: rgba(212, 168, 75, 0.08);
     }
 
-    tr.scored td {
-      color: var(--muted);
+    .cell-btn.open:hover,
+    .cell-btn.open:focus-visible {
+      border-color: var(--gold);
+      background: rgba(212, 168, 75, 0.18);
     }
 
-    tr.best td:last-child,
-    .score-hint.best {
+    .cell-btn.best {
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 0 1px rgba(240, 215, 140, 0.55), 0 0 14px rgba(212, 168, 75, 0.45);
+      color: #fff8e7;
+      background: rgba(212, 168, 75, 0.22);
+    }
+
+    .cell-btn.filled {
+      border-color: rgba(62, 207, 110, 0.45);
+      background: rgba(62, 207, 110, 0.12);
       color: var(--ok);
+      cursor: default;
+    }
+
+    .cell-btn.filled::after {
+      content: " ✓";
+      font-size: 0.62rem;
+    }
+
+    .cell-btn.zero {
+      color: #8a7460;
+    }
+
+    .cell-btn:disabled:not(.filled):not(.open) {
+      opacity: 0.55;
+    }
+
+    tr.total-row td {
+      border-top: 1px solid rgba(212, 168, 75, 0.28);
+      border-bottom: none;
+      padding-top: 8px;
       font-weight: 700;
+      color: var(--gold-soft);
+    }
+
+    tr.jackpot-row td.cat {
+      color: var(--gold);
     }
 
     .totals {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 7px;
       margin-top: 10px;
     }
 
@@ -189,49 +241,55 @@
       background: rgba(0, 0, 0, 0.28);
       border: 1px solid rgba(212, 168, 75, 0.22);
       border-radius: 12px;
-      padding: 8px 10px;
+      padding: 7px 8px;
       text-align: center;
+    }
+
+    .total-box.accent {
+      border-color: rgba(62, 207, 110, 0.35);
+    }
+
+    .total-box.gold {
+      border-color: rgba(240, 215, 140, 0.45);
     }
 
     .total-box span {
       display: block;
-      font-size: 0.68rem;
+      font-size: 0.6rem;
       letter-spacing: 0.08em;
       color: var(--muted);
     }
 
     .total-box strong {
       font-family: Cinzel, Georgia, serif;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: var(--gold-soft);
     }
+
+    .total-box.accent strong { color: var(--ok); }
+    .total-box.gold strong { color: var(--gold-soft); }
 
     .message {
       min-height: 1.2em;
       text-align: center;
       color: var(--gold-soft);
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       font-weight: 600;
     }
 
     .message.warn { color: #ffb4b4; }
     .message.ok { color: var(--ok); }
 
-    .tray-wrap {
-      margin-top: auto;
-    }
+    .tray-wrap { margin-top: auto; }
 
     .roll-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .pips {
-      display: flex;
-      gap: 6px;
-    }
+    .pips { display: flex; gap: 6px; }
 
     .pip {
       width: 10px;
@@ -247,7 +305,6 @@
     }
 
     .tray {
-      position: relative;
       background:
         radial-gradient(ellipse at 50% 40%, rgba(70, 110, 160, 0.35), transparent 55%),
         linear-gradient(180deg, #2d4058 0%, #1a2738 100%);
@@ -257,33 +314,33 @@
         inset 0 20px 40px rgba(0, 0, 0, 0.35),
         var(--shadow);
       border-radius: 22px;
-      padding: 18px 10px 14px;
+      padding: 16px 8px 12px;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      min-height: 150px;
+      gap: 6px;
+      min-height: 140px;
     }
 
     .die-slot {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
 
     .die {
-      width: min(56px, 14vw);
-      height: min(56px, 14vw);
+      width: min(54px, 13vw);
+      height: min(54px, 13vw);
       border-radius: 12px;
       background: linear-gradient(145deg, #fffdf8, #e7e0d4);
-      box-shadow:
-        0 8px 14px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       display: grid;
       place-items: center;
-      position: relative;
       transition: transform 0.15s ease, box-shadow 0.15s ease, outline-color 0.15s ease;
       outline: 2px solid transparent;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
     }
 
     .die.held {
@@ -295,9 +352,7 @@
       transform: translateY(-4px);
     }
 
-    .die.rolling {
-      animation: tumble 0.12s linear infinite;
-    }
+    .die.rolling { animation: tumble 0.12s linear infinite; }
 
     @keyframes tumble {
       0% { transform: rotate(-8deg) scale(0.96); }
@@ -315,12 +370,11 @@
     }
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       margin: auto;
       border-radius: 50%;
       background: #1d1712;
-      box-shadow: inset 0 1px 1px rgba(255,255,255,0.25);
       opacity: 0;
     }
 
@@ -352,11 +406,11 @@
       background: linear-gradient(180deg, #6b4e22, #3d2a12);
       color: var(--gold-soft);
       border-radius: 999px;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      padding: 5px 8px;
-      min-width: 52px;
+      padding: 5px 7px;
+      min-width: 48px;
       cursor: pointer;
     }
 
@@ -366,17 +420,14 @@
       border-color: var(--gold-soft);
     }
 
-    .hold-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .hold-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .actions {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
     .ghost {
@@ -385,36 +436,32 @@
       background: rgba(0, 0, 0, 0.25);
       color: var(--muted);
       border-radius: 12px;
-      padding: 12px 10px;
+      padding: 12px 8px;
       font-weight: 700;
       letter-spacing: 0.04em;
       cursor: pointer;
+      font-size: 0.78rem;
     }
 
     .roll-btn {
-      width: 92px;
-      height: 92px;
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
       border: 4px solid rgba(180, 210, 255, 0.55);
-      background:
-        radial-gradient(circle at 35% 30%, #7eb6ff, #2f6fd6 55%, #1a3f8a);
+      background: radial-gradient(circle at 35% 30%, #7eb6ff, #2f6fd6 55%, #1a3f8a);
       color: white;
       font-family: Cinzel, Georgia, serif;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.95rem;
       letter-spacing: 0.08em;
       box-shadow:
         0 0 0 6px rgba(47, 111, 214, 0.18),
         0 0 28px var(--roll-glow),
         0 12px 24px rgba(0, 0, 0, 0.45);
       cursor: pointer;
-      transition: transform 0.12s ease, filter 0.12s ease;
     }
 
-    .roll-btn:active:not(:disabled) {
-      transform: scale(0.96);
-    }
-
+    .roll-btn:active:not(:disabled) { transform: scale(0.96); }
     .roll-btn:disabled {
       filter: grayscale(0.6) brightness(0.7);
       cursor: not-allowed;
@@ -424,9 +471,9 @@
     .hint {
       text-align: center;
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.74rem;
       line-height: 1.35;
-      padding: 0 8px;
+      padding: 0 6px;
     }
 
     @media (min-width: 500px) {
@@ -449,26 +496,40 @@
     <header>
       <h1 class="logo">BALUTE ROYAL <span>DICE PROTOTYPE</span></h1>
       <div class="status">
-        <div class="chip" id="roundChip">ROUND 1 / 13</div>
+        <div class="chip" id="roundChip">ROUND 1 / 28</div>
         <div class="chip" id="turnChip">ROLL 0 / 3</div>
       </div>
     </header>
 
     <section class="panel scorecard">
       <h2>SCORECARD</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>CATEGORY</th>
-            <th>PTS</th>
-          </tr>
-        </thead>
-        <tbody id="scoreBody"></tbody>
-      </table>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>CATEGORY</th>
+              <th>1</th>
+              <th>2</th>
+              <th>3</th>
+              <th>4</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody id="scoreBody"></tbody>
+        </table>
+      </div>
       <div class="totals">
         <div class="total-box">
           <span>TOTAL SCORE</span>
           <strong id="totalScore">0</strong>
+        </div>
+        <div class="total-box accent">
+          <span>TOTAL POINTS</span>
+          <strong id="totalPoints">0</strong>
+        </div>
+        <div class="total-box gold">
+          <span>JACKPOT BONUS</span>
+          <strong id="jackpotBonus">+0</strong>
         </div>
         <div class="total-box">
           <span>GRAND TOTAL</span>
@@ -499,11 +560,13 @@
     </section>
 
     <p class="hint">
-      Hold dice you want to keep, then roll again (up to 3). Tap a category to bank the score.
+      Full Balut card: 4 columns per category. Hold dice, roll up to 3 times, then tap an open cell to bank.
     </p>
   </div>
 
   <script>
+    const COLUMNS = 4;
+
     const CATEGORIES = [
       { id: "fours", label: "4's", score: (dice) => sumOfFace(dice, 4) },
       { id: "fives", label: "5's", score: (dice) => sumOfFace(dice, 5) },
@@ -512,7 +575,7 @@
         id: "straight",
         label: "STRAIGHT",
         score: (dice) => {
-          const s = [...new Set(dice)].sort().join("");
+          const s = [...new Set(dice)].sort((a, b) => a - b).join("");
           return s === "12345" || s === "23456" ? 20 : 0;
         },
       },
@@ -520,8 +583,7 @@
         id: "fullhouse",
         label: "FULL HOUSE",
         score: (dice) => {
-          const counts = countFaces(dice);
-          const vals = Object.values(counts).sort((a, b) => b - a);
+          const vals = Object.values(countFaces(dice)).sort((a, b) => b - a);
           return vals[0] === 3 && vals[1] === 2 ? 30 : 0;
         },
       },
@@ -529,9 +591,21 @@
       {
         id: "balut",
         label: "BALUT",
-        score: (dice) => (dice.every((d) => d === dice[0]) ? 50 + dice[0] * 5 : 0),
+        score: (dice) => (isBalut(dice) ? 50 + dice[0] * 5 : 0),
+      },
+      {
+        id: "jackpot",
+        label: "JACKPOT",
+        score: (dice) => (isBalut(dice) ? 4 : 0),
+        jackpot: true,
       },
     ];
+
+    function emptyScores() {
+      return Object.fromEntries(
+        CATEGORIES.map((c) => [c.id, Array(COLUMNS).fill(null)])
+      );
+    }
 
     const state = {
       dice: [1, 2, 3, 4, 5],
@@ -539,8 +613,9 @@
       rolls: 0,
       maxRolls: 3,
       round: 1,
-      maxRounds: 13,
-      scores: Object.fromEntries(CATEGORIES.map((c) => [c.id, null])),
+      maxRounds: CATEGORIES.length * COLUMNS,
+      scores: emptyScores(),
+      jackpotBonus: 0,
       rolling: false,
       hasRolled: false,
     };
@@ -554,6 +629,8 @@
     const roundChip = document.getElementById("roundChip");
     const turnChip = document.getElementById("turnChip");
     const totalScoreEl = document.getElementById("totalScore");
+    const totalPointsEl = document.getElementById("totalPoints");
+    const jackpotBonusEl = document.getElementById("jackpotBonus");
     const grandTotalEl = document.getElementById("grandTotal");
     const rollPips = [...document.querySelectorAll("#rollPips .pip")];
 
@@ -566,6 +643,46 @@
         acc[d] = (acc[d] || 0) + 1;
         return acc;
       }, {});
+    }
+
+    function isBalut(dice) {
+      return dice.every((d) => d === dice[0]);
+    }
+
+    function filledCount() {
+      let n = 0;
+      for (const cat of CATEGORIES) {
+        for (const v of state.scores[cat.id]) if (v !== null) n += 1;
+      }
+      return n;
+    }
+
+    function allCategoriesFilled() {
+      return filledCount() >= state.maxRounds;
+    }
+
+    function nextOpenColumn(catId) {
+      return state.scores[catId].findIndex((v) => v === null);
+    }
+
+    function categoryPoints(catId) {
+      return state.scores[catId].reduce((a, b) => a + (b || 0), 0);
+    }
+
+    function totalScore() {
+      return CATEGORIES
+        .filter((c) => !c.jackpot)
+        .reduce((sum, c) => sum + categoryPoints(c.id), 0);
+    }
+
+    function totalPoints() {
+      // Simple prototype mapping: every filled non-jackpot cell awards 1 point if > 0
+      let pts = 0;
+      for (const cat of CATEGORIES) {
+        if (cat.jackpot) continue;
+        for (const v of state.scores[cat.id]) if (v !== null && v > 0) pts += 1;
+      }
+      return pts;
     }
 
     function setMessage(text, kind = "") {
@@ -602,8 +719,7 @@
     }
 
     function renderDice() {
-      const slots = [...tray.children];
-      slots.forEach((slot, i) => {
+      [...tray.children].forEach((slot, i) => {
         const die = slot.querySelector(".die");
         const hold = slot.querySelector(".hold-btn");
         die.dataset.value = String(state.dice[i]);
@@ -611,58 +727,99 @@
         die.classList.toggle("rolling", state.rolling && !state.held[i]);
         hold.setAttribute("aria-pressed", String(state.held[i]));
         hold.textContent = state.held[i] ? "HELD" : "HOLD";
-        hold.disabled = !state.hasRolled || state.rolling || state.rolls >= state.maxRolls && false;
-        // Allow hold after first roll while turn is active
         hold.disabled = !state.hasRolled || state.rolling;
         die.disabled = hold.disabled;
       });
     }
 
-    function renderScorecard() {
-      scoreBody.innerHTML = "";
-      let bestId = null;
-      let bestScore = -1;
-
-      if (state.hasRolled && !state.rolling) {
-        for (const cat of CATEGORIES) {
-          if (state.scores[cat.id] !== null) continue;
-          const value = cat.score(state.dice);
-          if (value > bestScore) {
-            bestScore = value;
-            bestId = cat.id;
-          }
+    function bestMove() {
+      if (!state.hasRolled || state.rolling) return null;
+      let best = null;
+      for (const cat of CATEGORIES) {
+        const col = nextOpenColumn(cat.id);
+        if (col < 0) continue;
+        const value = cat.score(state.dice);
+        if (!best || value > best.value) {
+          best = { id: cat.id, col, value };
         }
       }
+      return best;
+    }
+
+    function renderScorecard() {
+      scoreBody.innerHTML = "";
+      const best = bestMove();
 
       for (const cat of CATEGORIES) {
-        const scored = state.scores[cat.id] !== null;
-        const preview = !scored && state.hasRolled ? cat.score(state.dice) : null;
         const tr = document.createElement("tr");
-        tr.className = scored ? "scored" : state.hasRolled ? "available" : "";
-        if (!scored && cat.id === bestId && bestScore > 0) tr.classList.add("best");
+        if (cat.jackpot) tr.classList.add("jackpot-row");
 
-        const pts = scored ? state.scores[cat.id] : preview === null ? "—" : preview;
-        tr.innerHTML = `
-          <td>
-            <button class="cat-btn" type="button" ${scored || !state.hasRolled || state.rolling ? "disabled" : ""}>
-              ${cat.label}${!scored && cat.id === bestId && bestScore > 0 ? " · BEST" : ""}
-            </button>
-          </td>
-          <td>${pts}</td>
-        `;
+        const catTd = document.createElement("td");
+        catTd.className = "cat";
+        catTd.textContent = cat.label;
+        tr.appendChild(catTd);
 
-        const btn = tr.querySelector(".cat-btn");
-        btn.addEventListener("click", () => bankCategory(cat.id));
+        for (let col = 0; col < COLUMNS; col++) {
+          const td = document.createElement("td");
+          const value = state.scores[cat.id][col];
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cell-btn";
+
+          if (value !== null) {
+            btn.classList.add("filled");
+            if (value === 0) btn.classList.add("zero");
+            btn.textContent = String(value);
+            btn.disabled = true;
+          } else {
+            const preview = state.hasRolled && !state.rolling ? cat.score(state.dice) : null;
+            const isNext = nextOpenColumn(cat.id) === col;
+            const canPick = isNext && state.hasRolled && !state.rolling;
+
+            if (canPick) {
+              btn.classList.add("open");
+              btn.textContent = String(preview);
+              if (best && best.id === cat.id && best.col === col && best.value > 0) {
+                btn.classList.add("best");
+              }
+              btn.addEventListener("click", () => bankCell(cat.id, col));
+            } else {
+              btn.textContent = "·";
+              btn.disabled = true;
+            }
+          }
+
+          td.appendChild(btn);
+          tr.appendChild(td);
+        }
+
+        const ptsTd = document.createElement("td");
+        ptsTd.className = "pts";
+        ptsTd.textContent = String(categoryPoints(cat.id));
+        tr.appendChild(ptsTd);
         scoreBody.appendChild(tr);
       }
 
-      const total = Object.values(state.scores).reduce((a, b) => a + (b || 0), 0);
-      totalScoreEl.textContent = String(total);
-      grandTotalEl.textContent = String(total);
+      const totalTr = document.createElement("tr");
+      totalTr.className = "total-row";
+      totalTr.innerHTML = `
+        <td class="cat">TOTAL</td>
+        <td colspan="4"></td>
+        <td class="pts">${totalScore()}</td>
+      `;
+      scoreBody.appendChild(totalTr);
+
+      const score = totalScore();
+      const points = totalPoints();
+      totalScoreEl.textContent = String(score);
+      totalPointsEl.textContent = String(points);
+      jackpotBonusEl.textContent = `+${state.jackpotBonus}`;
+      grandTotalEl.textContent = String(points + state.jackpotBonus);
     }
 
     function renderChrome() {
-      roundChip.textContent = `ROUND ${state.round} / ${state.maxRounds}`;
+      state.round = Math.min(filledCount() + 1, state.maxRounds);
+      roundChip.textContent = `ROUND ${Math.min(state.round, state.maxRounds)} / ${state.maxRounds}`;
       turnChip.textContent = `ROLL ${state.rolls} / ${state.maxRolls}`;
       rollPips.forEach((pip, i) => pip.classList.toggle("on", i < state.rolls));
       rollBtn.disabled = state.rolling || state.rolls >= state.maxRolls || allCategoriesFilled();
@@ -672,10 +829,6 @@
       renderDice();
       renderScorecard();
       renderChrome();
-    }
-
-    function allCategoriesFilled() {
-      return CATEGORIES.every((c) => state.scores[c.id] !== null);
     }
 
     function toggleHold(index) {
@@ -688,10 +841,17 @@
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
+    function resetTurnDice() {
+      state.dice = [1, 2, 3, 4, 5];
+      state.held = [false, false, false, false, false];
+      state.rolls = 0;
+      state.hasRolled = false;
+    }
+
     async function rollDice() {
       if (state.rolling || state.rolls >= state.maxRolls) return;
       if (allCategoriesFilled()) {
-        setMessage("All categories filled — reset to play again.", "warn");
+        setMessage("Scorecard full — reset to play again.", "warn");
         return;
       }
 
@@ -718,35 +878,40 @@
       state.rolling = false;
       render();
 
-      if (state.dice.every((d) => d === state.dice[0])) {
-        setMessage(`Balut! Five ${state.dice[0]}s`, "ok");
+      if (isBalut(state.dice)) {
+        setMessage(`Balut! Five ${state.dice[0]}s — bank it or take Jackpot.`, "ok");
       } else if (state.rolls >= state.maxRolls) {
-        setMessage("Final roll — pick a category to score.", "warn");
+        setMessage("Final roll — tap an open scorecard cell.", "warn");
       } else {
-        setMessage("Hold any dice, then roll again — or bank a score.");
+        setMessage("Hold dice, roll again, or tap an open cell to score.");
       }
     }
 
-    function bankCategory(id) {
+    function bankCell(catId, col) {
       if (!state.hasRolled || state.rolling) return;
-      if (state.scores[id] !== null) return;
+      if (state.scores[catId][col] !== null) return;
+      if (nextOpenColumn(catId) !== col) return;
 
-      const cat = CATEGORIES.find((c) => c.id === id);
+      const cat = CATEGORIES.find((c) => c.id === catId);
       const value = cat.score(state.dice);
-      state.scores[id] = value;
-      setMessage(`Scored ${value} in ${cat.label}.`, "ok");
+      state.scores[catId][col] = value;
 
-      // Advance round lightly for prototype feel
-      if (state.round < state.maxRounds) state.round += 1;
+      if (cat.jackpot && value > 0) {
+        state.jackpotBonus += value;
+        setMessage(`Jackpot! +${value} bonus.`, "ok");
+      } else if (cat.id === "balut" && value > 0) {
+        setMessage(`Balut scored for ${value}.`, "ok");
+      } else {
+        setMessage(`Scored ${value} in ${cat.label} (column ${col + 1}).`, "ok");
+      }
 
-      // Start next turn automatically
-      state.dice = [1, 2, 3, 4, 5];
-      state.held = [false, false, false, false, false];
-      state.rolls = 0;
-      state.hasRolled = false;
+      resetTurnDice();
 
       if (allCategoriesFilled()) {
-        setMessage(`Game complete — grand total ${Object.values(state.scores).reduce((a, b) => a + b, 0)}.`, "ok");
+        setMessage(
+          `Game complete — grand total ${totalPoints() + state.jackpotBonus}.`,
+          "ok"
+        );
       }
 
       render();
@@ -754,27 +919,21 @@
 
     function newTurn() {
       if (state.rolling) return;
-      state.dice = [1, 2, 3, 4, 5];
-      state.held = [false, false, false, false, false];
-      state.rolls = 0;
-      state.hasRolled = false;
+      resetTurnDice();
       setMessage("New turn — tap ROLL.");
       render();
     }
 
     function resetGame() {
       if (state.rolling) return;
-      state.dice = [1, 2, 3, 4, 5];
-      state.held = [false, false, false, false, false];
-      state.rolls = 0;
+      resetTurnDice();
       state.round = 1;
-      state.hasRolled = false;
-      state.scores = Object.fromEntries(CATEGORIES.map((c) => [c.id, null]));
+      state.scores = emptyScores();
+      state.jackpotBonus = 0;
       setMessage("Fresh game — tap ROLL to throw the dice.");
       render();
     }
 
-    // Init
     for (let i = 0; i < 5; i++) tray.appendChild(createDie(i));
     rollBtn.addEventListener("click", rollDice);
     newTurnBtn.addEventListener("click", newTurn);

@@ -18,7 +18,9 @@ Or just open `index.html` directly in a browser.
 
 - Tap **ROLL** to animate 5 dice (up to 3 rolls per turn)
 - Tap a die or **HOLD** to keep it
-- Tap a scorecard category to bank points
+- Full Balut scorecard: categories × 4 columns + PTS
+- Tap an open cell to bank into that column
+- Totals: Total Score, Total Points, Jackpot Bonus, Grand Total
 - **NEW TURN** / **RESET** for another try
 
 This is a visual feel test only — not the Unity build.
