@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Balute Royal — Dice Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wood-dark: #1a120c;
+      --wood: #2a1c14;
+      --wood-mid: #3b281c;
+      --gold: #d4a84b;
+      --gold-soft: #f0d78c;
+      --gold-deep: #9a7428;
+      --ink: #f4ebe0;
+      --muted: #b9a790;
+      --panel: rgba(18, 12, 8, 0.78);
+      --tray: #243447;
+      --hold: #c9a24a;
+      --roll: #2f6fd6;
+      --roll-glow: rgba(70, 140, 255, 0.55);
+      --ok: #3ecf6e;
+      --danger: #d65a5a;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 120% 80% at 50% 0%, rgba(80, 50, 28, 0.55), transparent 55%),
+        linear-gradient(180deg, #120d0a 0%, #23160f 40%, #0d0a08 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+      opacity: 0.9;
+      z-index: 0;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(430px, 100%);
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: 14px 14px calc(18px + env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    header {
+      text-align: center;
+      padding: 8px 8px 2px;
+    }
+
+    .logo {
+      margin: 0;
+      font-family: Cinzel, Georgia, serif;
+      font-weight: 700;
+      font-size: 1.45rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-soft);
+      text-shadow: 0 2px 0 var(--gold-deep), 0 0 18px rgba(212, 168, 75, 0.35);
+    }
+
+    .logo span {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .status {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background: var(--panel);
+      border: 1px solid rgba(212, 168, 75, 0.35);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold-soft);
+      letter-spacing: 0.04em;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(42, 28, 20, 0.92), rgba(18, 12, 8, 0.92));
+      border: 1px solid rgba(212, 168, 75, 0.28);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+
+    .scorecard h2,
+    .tray-wrap h2 {
+      margin: 0 0 10px;
+      font-family: Cinzel, Georgia, serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    th, td {
+      padding: 8px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+    }
+
+    td:first-child, th:first-child {
+      text-align: left;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .cat-btn {
+      width: 100%;
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    tr.available .cat-btn {
+      color: var(--gold-soft);
+    }
+
+    tr.available:hover {
+      background: rgba(212, 168, 75, 0.08);
+    }
+
+    tr.scored td {
+      color: var(--muted);
+    }
+
+    tr.best td:last-child,
+    .score-hint.best {
+      color: var(--ok);
+      font-weight: 700;
+    }
+
+    .totals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .total-box {
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(212, 168, 75, 0.22);
+      border-radius: 12px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .total-box span {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .total-box strong {
+      font-family: Cinzel, Georgia, serif;
+      font-size: 1.2rem;
+      color: var(--gold-soft);
+    }
+
+    .message {
+      min-height: 1.2em;
+      text-align: center;
+      color: var(--gold-soft);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .message.warn { color: #ffb4b4; }
+    .message.ok { color: var(--ok); }
+
+    .tray-wrap {
+      margin-top: auto;
+    }
+
+    .roll-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .pips {
+      display: flex;
+      gap: 6px;
+    }
+
+    .pip {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      background: transparent;
+    }
+
+    .pip.on {
+      background: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 168, 75, 0.7);
+    }
+
+    .tray {
+      position: relative;
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(70, 110, 160, 0.35), transparent 55%),
+        linear-gradient(180deg, #2d4058 0%, #1a2738 100%);
+      border: 6px solid #4a3424;
+      box-shadow:
+        inset 0 0 0 2px #6b4a2f,
+        inset 0 20px 40px rgba(0, 0, 0, 0.35),
+        var(--shadow);
+      border-radius: 22px;
+      padding: 18px 10px 14px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      min-height: 150px;
+    }
+
+    .die-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .die {
+      width: min(56px, 14vw);
+      height: min(56px, 14vw);
+      border-radius: 12px;
+      background: linear-gradient(145deg, #fffdf8, #e7e0d4);
+      box-shadow:
+        0 8px 14px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      display: grid;
+      place-items: center;
+      position: relative;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, outline-color 0.15s ease;
+      outline: 2px solid transparent;
+    }
+
+    .die.held {
+      outline-color: var(--gold);
+      box-shadow:
+        0 0 0 2px rgba(212, 168, 75, 0.35),
+        0 8px 14px rgba(0, 0, 0, 0.4),
+        0 0 18px rgba(212, 168, 75, 0.35);
+      transform: translateY(-4px);
+    }
+
+    .die.rolling {
+      animation: tumble 0.12s linear infinite;
+    }
+
+    @keyframes tumble {
+      0% { transform: rotate(-8deg) scale(0.96); }
+      50% { transform: rotate(8deg) scale(1.04); }
+      100% { transform: rotate(-4deg) scale(0.98); }
+    }
+
+    .pips-face {
+      width: 78%;
+      height: 78%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      margin: auto;
+      border-radius: 50%;
+      background: #1d1712;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.25);
+      opacity: 0;
+    }
+
+    .die[data-value="1"] .d5,
+    .die[data-value="2"] .d1,
+    .die[data-value="2"] .d9,
+    .die[data-value="3"] .d1,
+    .die[data-value="3"] .d5,
+    .die[data-value="3"] .d9,
+    .die[data-value="4"] .d1,
+    .die[data-value="4"] .d3,
+    .die[data-value="4"] .d7,
+    .die[data-value="4"] .d9,
+    .die[data-value="5"] .d1,
+    .die[data-value="5"] .d3,
+    .die[data-value="5"] .d5,
+    .die[data-value="5"] .d7,
+    .die[data-value="5"] .d9,
+    .die[data-value="6"] .d1,
+    .die[data-value="6"] .d3,
+    .die[data-value="6"] .d4,
+    .die[data-value="6"] .d6,
+    .die[data-value="6"] .d7,
+    .die[data-value="6"] .d9 { opacity: 1; }
+
+    .hold-btn {
+      appearance: none;
+      border: 1px solid rgba(212, 168, 75, 0.55);
+      background: linear-gradient(180deg, #6b4e22, #3d2a12);
+      color: var(--gold-soft);
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 5px 8px;
+      min-width: 52px;
+      cursor: pointer;
+    }
+
+    .hold-btn[aria-pressed="true"] {
+      background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+      color: #1a120c;
+      border-color: var(--gold-soft);
+    }
+
+    .hold-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .ghost {
+      appearance: none;
+      border: 1px solid rgba(212, 168, 75, 0.35);
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--muted);
+      border-radius: 12px;
+      padding: 12px 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+
+    .roll-btn {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      border: 4px solid rgba(180, 210, 255, 0.55);
+      background:
+        radial-gradient(circle at 35% 30%, #7eb6ff, #2f6fd6 55%, #1a3f8a);
+      color: white;
+      font-family: Cinzel, Georgia, serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      box-shadow:
+        0 0 0 6px rgba(47, 111, 214, 0.18),
+        0 0 28px var(--roll-glow),
+        0 12px 24px rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    .roll-btn:active:not(:disabled) {
+      transform: scale(0.96);
+    }
+
+    .roll-btn:disabled {
+      filter: grayscale(0.6) brightness(0.7);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .hint {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+      padding: 0 8px;
+    }
+
+    @media (min-width: 500px) {
+      body {
+        display: grid;
+        place-items: start center;
+        padding: 20px 0;
+      }
+      .app {
+        border: 1px solid rgba(212, 168, 75, 0.18);
+        border-radius: 28px;
+        background: rgba(10, 8, 6, 0.35);
+        box-shadow: var(--shadow);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1 class="logo">BALUTE ROYAL <span>DICE PROTOTYPE</span></h1>
+      <div class="status">
+        <div class="chip" id="roundChip">ROUND 1 / 13</div>
+        <div class="chip" id="turnChip">ROLL 0 / 3</div>
+      </div>
+    </header>
+
+    <section class="panel scorecard">
+      <h2>SCORECARD</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>CATEGORY</th>
+            <th>PTS</th>
+          </tr>
+        </thead>
+        <tbody id="scoreBody"></tbody>
+      </table>
+      <div class="totals">
+        <div class="total-box">
+          <span>TOTAL SCORE</span>
+          <strong id="totalScore">0</strong>
+        </div>
+        <div class="total-box">
+          <span>GRAND TOTAL</span>
+          <strong id="grandTotal">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <p class="message" id="message">Tap ROLL to throw the dice.</p>
+
+    <section class="panel tray-wrap">
+      <div class="roll-meta">
+        <h2 style="margin:0">DICE TRAY</h2>
+        <div class="pips" id="rollPips" aria-hidden="true">
+          <div class="pip"></div>
+          <div class="pip"></div>
+          <div class="pip"></div>
+        </div>
+      </div>
+
+      <div class="tray" id="tray" aria-label="Dice tray"></div>
+
+      <div class="actions">
+        <button class="ghost" id="newTurnBtn" type="button">NEW TURN</button>
+        <button class="roll-btn" id="rollBtn" type="button">ROLL</button>
+        <button class="ghost" id="resetBtn" type="button">RESET</button>
+      </div>
+    </section>
+
+    <p class="hint">
+      Hold dice you want to keep, then roll again (up to 3). Tap a category to bank the score.
+    </p>
+  </div>
+
+  <script>
+    const CATEGORIES = [
+      { id: "fours", label: "4's", score: (dice) => sumOfFace(dice, 4) },
+      { id: "fives", label: "5's", score: (dice) => sumOfFace(dice, 5) },
+      { id: "sixes", label: "6's", score: (dice) => sumOfFace(dice, 6) },
+      {
+        id: "straight",
+        label: "STRAIGHT",
+        score: (dice) => {
+          const s = [...new Set(dice)].sort().join("");
+          return s === "12345" || s === "23456" ? 20 : 0;
+        },
+      },
+      {
+        id: "fullhouse",
+        label: "FULL HOUSE",
+        score: (dice) => {
+          const counts = countFaces(dice);
+          const vals = Object.values(counts).sort((a, b) => b - a);
+          return vals[0] === 3 && vals[1] === 2 ? 30 : 0;
+        },
+      },
+      { id: "choice", label: "CHOICE", score: (dice) => dice.reduce((a, b) => a + b, 0) },
+      {
+        id: "balut",
+        label: "BALUT",
+        score: (dice) => (dice.every((d) => d === dice[0]) ? 50 + dice[0] * 5 : 0),
+      },
+    ];
+
+    const state = {
+      dice: [1, 2, 3, 4, 5],
+      held: [false, false, false, false, false],
+      rolls: 0,
+      maxRolls: 3,
+      round: 1,
+      maxRounds: 13,
+      scores: Object.fromEntries(CATEGORIES.map((c) => [c.id, null])),
+      rolling: false,
+      hasRolled: false,
+    };
+
+    const tray = document.getElementById("tray");
+    const scoreBody = document.getElementById("scoreBody");
+    const messageEl = document.getElementById("message");
+    const rollBtn = document.getElementById("rollBtn");
+    const newTurnBtn = document.getElementById("newTurnBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const roundChip = document.getElementById("roundChip");
+    const turnChip = document.getElementById("turnChip");
+    const totalScoreEl = document.getElementById("totalScore");
+    const grandTotalEl = document.getElementById("grandTotal");
+    const rollPips = [...document.querySelectorAll("#rollPips .pip")];
+
+    function sumOfFace(dice, face) {
+      return dice.filter((d) => d === face).reduce((a, b) => a + b, 0);
+    }
+
+    function countFaces(dice) {
+      return dice.reduce((acc, d) => {
+        acc[d] = (acc[d] || 0) + 1;
+        return acc;
+      }, {});
+    }
+
+    function setMessage(text, kind = "") {
+      messageEl.textContent = text;
+      messageEl.className = "message" + (kind ? ` ${kind}` : "");
+    }
+
+    function createDie(index) {
+      const slot = document.createElement("div");
+      slot.className = "die-slot";
+
+      const die = document.createElement("button");
+      die.type = "button";
+      die.className = "die";
+      die.dataset.index = String(index);
+      die.setAttribute("aria-label", `Die ${index + 1}`);
+      die.innerHTML = `
+        <div class="pips-face">
+          <i class="dot d1"></i><i class="dot d2"></i><i class="dot d3"></i>
+          <i class="dot d4"></i><i class="dot d5"></i><i class="dot d6"></i>
+          <i class="dot d7"></i><i class="dot d8"></i><i class="dot d9"></i>
+        </div>
+      `;
+      die.addEventListener("click", () => toggleHold(index));
+
+      const hold = document.createElement("button");
+      hold.type = "button";
+      hold.className = "hold-btn";
+      hold.textContent = "HOLD";
+      hold.addEventListener("click", () => toggleHold(index));
+
+      slot.append(die, hold);
+      return slot;
+    }
+
+    function renderDice() {
+      const slots = [...tray.children];
+      slots.forEach((slot, i) => {
+        const die = slot.querySelector(".die");
+        const hold = slot.querySelector(".hold-btn");
+        die.dataset.value = String(state.dice[i]);
+        die.classList.toggle("held", state.held[i]);
+        die.classList.toggle("rolling", state.rolling && !state.held[i]);
+        hold.setAttribute("aria-pressed", String(state.held[i]));
+        hold.textContent = state.held[i] ? "HELD" : "HOLD";
+        hold.disabled = !state.hasRolled || state.rolling || state.rolls >= state.maxRolls && false;
+        // Allow hold after first roll while turn is active
+        hold.disabled = !state.hasRolled || state.rolling;
+        die.disabled = hold.disabled;
+      });
+    }
+
+    function renderScorecard() {
+      scoreBody.innerHTML = "";
+      let bestId = null;
+      let bestScore = -1;
+
+      if (state.hasRolled && !state.rolling) {
+        for (const cat of CATEGORIES) {
+          if (state.scores[cat.id] !== null) continue;
+          const value = cat.score(state.dice);
+          if (value > bestScore) {
+            bestScore = value;
+            bestId = cat.id;
+          }
+        }
+      }
+
+      for (const cat of CATEGORIES) {
+        const scored = state.scores[cat.id] !== null;
+        const preview = !scored && state.hasRolled ? cat.score(state.dice) : null;
+        const tr = document.createElement("tr");
+        tr.className = scored ? "scored" : state.hasRolled ? "available" : "";
+        if (!scored && cat.id === bestId && bestScore > 0) tr.classList.add("best");
+
+        const pts = scored ? state.scores[cat.id] : preview === null ? "—" : preview;
+        tr.innerHTML = `
+          <td>
+            <button class="cat-btn" type="button" ${scored || !state.hasRolled || state.rolling ? "disabled" : ""}>
+              ${cat.label}${!scored && cat.id === bestId && bestScore > 0 ? " · BEST" : ""}
+            </button>
+          </td>
+          <td>${pts}</td>
+        `;
+
+        const btn = tr.querySelector(".cat-btn");
+        btn.addEventListener("click", () => bankCategory(cat.id));
+        scoreBody.appendChild(tr);
+      }
+
+      const total = Object.values(state.scores).reduce((a, b) => a + (b || 0), 0);
+      totalScoreEl.textContent = String(total);
+      grandTotalEl.textContent = String(total);
+    }
+
+    function renderChrome() {
+      roundChip.textContent = `ROUND ${state.round} / ${state.maxRounds}`;
+      turnChip.textContent = `ROLL ${state.rolls} / ${state.maxRolls}`;
+      rollPips.forEach((pip, i) => pip.classList.toggle("on", i < state.rolls));
+      rollBtn.disabled = state.rolling || state.rolls >= state.maxRolls || allCategoriesFilled();
+    }
+
+    function render() {
+      renderDice();
+      renderScorecard();
+      renderChrome();
+    }
+
+    function allCategoriesFilled() {
+      return CATEGORIES.every((c) => state.scores[c.id] !== null);
+    }
+
+    function toggleHold(index) {
+      if (!state.hasRolled || state.rolling) return;
+      state.held[index] = !state.held[index];
+      render();
+    }
+
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function rollDice() {
+      if (state.rolling || state.rolls >= state.maxRolls) return;
+      if (allCategoriesFilled()) {
+        setMessage("All categories filled — reset to play again.", "warn");
+        return;
+      }
+
+      state.rolling = true;
+      state.rolls += 1;
+      state.hasRolled = true;
+      render();
+      setMessage("Rolling…");
+
+      const duration = 650;
+      const start = performance.now();
+      while (performance.now() - start < duration) {
+        for (let i = 0; i < 5; i++) {
+          if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random() * 6);
+        }
+        renderDice();
+        await sleep(70);
+      }
+
+      for (let i = 0; i < 5; i++) {
+        if (!state.held[i]) state.dice[i] = 1 + Math.floor(Math.random() * 6);
+      }
+
+      state.rolling = false;
+      render();
+
+      if (state.dice.every((d) => d === state.dice[0])) {
+        setMessage(`Balut! Five ${state.dice[0]}s`, "ok");
+      } else if (state.rolls >= state.maxRolls) {
+        setMessage("Final roll — pick a category to score.", "warn");
+      } else {
+        setMessage("Hold any dice, then roll again — or bank a score.");
+      }
+    }
+
+    function bankCategory(id) {
+      if (!state.hasRolled || state.rolling) return;
+      if (state.scores[id] !== null) return;
+
+      const cat = CATEGORIES.find((c) => c.id === id);
+      const value = cat.score(state.dice);
+      state.scores[id] = value;
+      setMessage(`Scored ${value} in ${cat.label}.`, "ok");
+
+      // Advance round lightly for prototype feel
+      if (state.round < state.maxRounds) state.round += 1;
+
+      // Start next turn automatically
+      state.dice = [1, 2, 3, 4, 5];
+      state.held = [false, false, false, false, false];
+      state.rolls = 0;
+      state.hasRolled = false;
+
+      if (allCategoriesFilled()) {
+        setMessage(`Game complete — grand total ${Object.values(state.scores).reduce((a, b) => a + b, 0)}.`, "ok");
+      }
+
+      render();
+    }
+
+    function newTurn() {
+      if (state.rolling) return;
+      state.dice = [1, 2, 3, 4, 5];
+      state.held = [false, false, false, false, false];
+      state.rolls = 0;
+      state.hasRolled = false;
+      setMessage("New turn — tap ROLL.");
+      render();
+    }
+
+    function resetGame() {
+      if (state.rolling) return;
+      state.dice = [1, 2, 3, 4, 5];
+      state.held = [false, false, false, false, false];
+      state.rolls = 0;
+      state.round = 1;
+      state.hasRolled = false;
+      state.scores = Object.fromEntries(CATEGORIES.map((c) => [c.id, null]));
+      setMessage("Fresh game — tap ROLL to throw the dice.");
+      render();
+    }
+
+    // Init
+    for (let i = 0; i < 5; i++) tray.appendChild(createDie(i));
+    rollBtn.addEventListener("click", rollDice);
+    newTurnBtn.addEventListener("click", newTurn);
+    resetBtn.addEventListener("click", resetGame);
+    render();
+  </script>
+</body>
+</html>
