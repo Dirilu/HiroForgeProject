@@ -47,8 +47,7 @@ namespace BRDK2.Pages
 
             content.Add(summary);
 
-            IReadOnlyList<HFDKAnalyzer.ScriptInfo> scripts =
-                HFDKAnalyzer.unusedScripts;
+            var scripts = HFDKAnalyzer.unusedScripts;
 
             if (scripts.Count == 0)
             {
@@ -62,14 +61,14 @@ namespace BRDK2.Pages
 
             for (int i = 0; i < shown; i++)
             {
-                HFDKAnalyzer.ScriptInfo script = scripts[i];
-                content.Add(CreateScriptRow(script));
+                var script = scripts[i];
+                content.Add(CreateScriptRow(script.name, script.asset));
             }
 
             return card;
         }
 
-        static VisualElement CreateScriptRow(HFDKAnalyzer.ScriptInfo script)
+        static VisualElement CreateScriptRow(string scriptName, Object asset)
         {
             VisualElement row = new VisualElement();
 
@@ -79,18 +78,18 @@ namespace BRDK2.Pages
             row.style.marginTop = 6;
             row.style.marginBottom = 4;
 
-            Label name = new Label(script.name ?? "Script");
+            Label name = new Label(scriptName ?? "Script");
             name.style.flexGrow = 1;
             name.style.color = BRDKTheme.Text;
             row.Add(name);
 
             Button ping = new Button(() =>
             {
-                if (script.asset == null)
+                if (asset == null)
                     return;
 
-                Selection.activeObject = script.asset;
-                EditorGUIUtility.PingObject(script.asset);
+                Selection.activeObject = asset;
+                EditorGUIUtility.PingObject(asset);
             });
 
             ping.text = "Select";
