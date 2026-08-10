@@ -131,7 +131,7 @@ namespace HF.Refactor.Engine
 
         public string Message { get; set; } = string.Empty;
 
-        public Exception? Exception { get; set; }
+        public Exception Exception { get; set; }
     }
 
     //--------------------------------------------------------

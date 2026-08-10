@@ -51,19 +51,19 @@ namespace BRDK2.Services.Scanners
                 if (!hasAsset && subFolders.Length == 0)
                 {
                     result.Count++;
-                    
-            UnityEngine.Debug.Log(
-    "[BRDK] Empty Folder: " + directory);
 
-UnityEngine.Object folder =
-    UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(
-        directory);
+                    UnityEngine.Debug.Log(
+                        "[BRDK] Empty Folder: " + directory);
 
-if (folder != null)
-{
-    result.Objects.Add(folder);
-    result.Paths.Add(directory);
-}
+                    UnityEngine.Object folder =
+                        UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(
+                            directory);
+
+                    if (folder != null)
+                    {
+                        result.Objects.Add(folder);
+                        result.Paths.Add(directory);
+                    }
                 }
             }
         }

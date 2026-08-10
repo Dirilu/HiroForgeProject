@@ -73,7 +73,7 @@ namespace HF.Refactor.Engine
             string source,
             string destination)
         {
-            string? folder =
+            string folder =
                 Path.GetDirectoryName(destination);
 
             if (!string.IsNullOrWhiteSpace(folder))
@@ -107,7 +107,10 @@ namespace HF.Refactor.Engine
                 return;
 
             string directory =
-                Path.GetDirectoryName(filePath)!;
+                Path.GetDirectoryName(filePath);
+
+            if (string.IsNullOrEmpty(directory))
+                return;
 
             string extension =
                 Path.GetExtension(filePath);
@@ -129,12 +132,15 @@ namespace HF.Refactor.Engine
             if (!Directory.Exists(directoryPath))
                 return;
 
-            string parent =
-                Directory.GetParent(directoryPath)!.FullName;
+            DirectoryInfo parentInfo =
+                Directory.GetParent(directoryPath);
+
+            if (parentInfo == null)
+                return;
 
             string destination =
                 Path.Combine(
-                    parent,
+                    parentInfo.FullName,
                     newName);
 
             Directory.Move(
@@ -157,10 +163,10 @@ namespace HF.Refactor.Engine
             string text =
                 File.ReadAllText(filePath);
 
-            text = text.Replace(
-                before,
-                after,
-                StringComparison.Ordinal);
+            if (!string.IsNullOrEmpty(before))
+            {
+                text = text.Replace(before, after);
+            }
 
             File.WriteAllText(
                 filePath,
