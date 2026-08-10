@@ -28,7 +28,7 @@ namespace HF.Refactor.Engine
         /// </summary>
         public void RestoreLast()
         {
-            string? backupFolder = GetLatestBackupFolder();
+            string backupFolder = GetLatestBackupFolder();
 
             if (string.IsNullOrWhiteSpace(backupFolder))
                 throw new InvalidOperationException(
@@ -44,7 +44,7 @@ namespace HF.Refactor.Engine
         // Private
         //--------------------------------------------------------
 
-        private string? GetLatestBackupFolder()
+        private string GetLatestBackupFolder()
         {
             string root = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -73,7 +73,7 @@ namespace HF.Refactor.Engine
             foreach (string backupFile in files)
             {
                 string relative =
-                    Path.GetRelativePath(
+                    GetRelativePath(
                         backupFolder,
                         backupFile);
 
@@ -89,6 +89,25 @@ namespace HF.Refactor.Engine
                 _logger.Info(
                     $"Restored {relative}");
             }
+        }
+
+        private static string GetRelativePath(
+            string relativeTo,
+            string path)
+        {
+            string from = Path.GetFullPath(relativeTo)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            string to = Path.GetFullPath(path);
+
+            if (!to.StartsWith(from, StringComparison.OrdinalIgnoreCase))
+                return to;
+
+            if (to.Length == from.Length)
+                return string.Empty;
+
+            return to.Substring(from.Length)
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         }
     }
 }

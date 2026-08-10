@@ -62,7 +62,7 @@ namespace BRDK2.Services
                     BRDKIcons.Settings,
                     () =>
                     {
-                        SettingsService.OpenProjectSettings(
+                        UnityEditor.SettingsService.OpenProjectSettings(
                             "Project/Player");
                     }));
 

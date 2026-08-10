@@ -89,7 +89,7 @@ namespace HF.Refactor.Models
         // Factory Methods
         //-----------------------------------------------------
 
-        public static RefactorResult Success()
+        public static RefactorResult CreateSuccess()
         {
             return new RefactorResult
             {
@@ -99,7 +99,7 @@ namespace HF.Refactor.Models
             };
         }
 
-        public static RefactorResult Success(
+        public static RefactorResult CreateSuccess(
             RefactorJob job)
         {
             if (job == null)

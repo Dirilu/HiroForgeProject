@@ -62,7 +62,7 @@ namespace HF.Refactor.Engine
 
             _logger.Info("Preview completed.");
 
-            return RefactorResult.Success(job);
+            return RefactorResult.CreateSuccess(job);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace HF.Refactor.Engine
 
             _logger.Info("Refactor completed.");
 
-            return RefactorResult.Success(job);
+            return RefactorResult.CreateSuccess(job);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace HF.Refactor.Engine
 
             _undoService.RestoreLast();
 
-            return RefactorResult.Success();
+            return RefactorResult.CreateSuccess();
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace HF.Refactor.Engine
 
             _validator.Validate(job);
 
-            return RefactorResult.Success(job);
+            return RefactorResult.CreateSuccess(job);
         }
     }
 }

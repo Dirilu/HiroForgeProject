@@ -206,31 +206,20 @@ namespace BRDK2.Widgets
         //----------------------------------------------------------
 
         static Button CreateScanButton(VisualElement card)
-{
-    Button button = new Button();
+        {
+            Button button = new Button();
 
-    button.text = "TEST BUTTON";
+            button.text = "Scan Project";
 
-    button.style.height = 60;
-    button.style.marginTop = 20;
+            button.style.height = 36;
+            button.style.marginTop = 16;
 
-    button.style.backgroundColor = Color.red;
+            button.clicked += () =>
+            {
+                Refresh(card);
+            };
 
-    button.clicked += () =>
-{
-    List<ScanResult> results = ProjectScannerService.Scan();
-
-    Debug.Log("Results: " + results.Count);
-
-    foreach (ScanResult result in results)
-    {
-        Debug.Log($"{result.Title} = {result.Count}");
-    }
-
-    Refresh(card);
-};
-
-    return button;
-}
+            return button;
+        }
     }
 }

@@ -47,11 +47,14 @@ namespace HF.Refactor.Engine
 
         private static void Sort(RefactorJob job)
         {
-            job.Operations = job.Operations
+            List<RefactorOperation> sorted = job.Operations
                 .OrderBy(GetPriority)
                 .ThenBy(x => x.FilePath)
                 .ThenBy(x => x.Line)
                 .ToList();
+
+            job.Operations.Clear();
+            job.Operations.AddRange(sorted);
         }
 
         private static void AssignExecutionOrder(
@@ -68,28 +71,38 @@ namespace HF.Refactor.Engine
         private static int GetPriority(
             RefactorOperation operation)
         {
-            return operation.Type switch
+            switch (operation.Type)
             {
-                RefactorOperationType.Namespace => 10,
+                case RefactorOperationType.Namespace:
+                    return 10;
 
-                RefactorOperationType.Class => 20,
+                case RefactorOperationType.Class:
+                    return 20;
 
-                RefactorOperationType.Struct => 30,
+                case RefactorOperationType.Struct:
+                    return 30;
 
-                RefactorOperationType.Interface => 40,
+                case RefactorOperationType.Interface:
+                    return 40;
 
-                RefactorOperationType.Enum => 50,
+                case RefactorOperationType.Enum:
+                    return 50;
 
-                RefactorOperationType.File => 60,
+                case RefactorOperationType.File:
+                    return 60;
 
-                RefactorOperationType.Folder => 70,
+                case RefactorOperationType.Folder:
+                    return 70;
 
-                RefactorOperationType.Asset => 80,
+                case RefactorOperationType.Asset:
+                    return 80;
 
-                RefactorOperationType.String => 90,
+                case RefactorOperationType.String:
+                    return 90;
 
-                _ => 999
-            };
+                default:
+                    return 999;
+            }
         }
     }
 }
